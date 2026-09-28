@@ -6,25 +6,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
 
 :root {
-  /* Brand Palette: Deep Emerald, Mint, & Slate */
-  --primary: #00796B;
-  --primary-hover: #00695C;
-  --primary-dark: #004D40;
-  --primary-light: #E0F2F1;
-  --primary-glow: rgba(0, 121, 107, 0.2);
-  --accent: #26A69A;
-  --accent-light: #B2DFDB;
+  /* Medical Clinical Blue & White Palette (matching Desktop app) */
+  --primary: #0284C7;
+  --primary-hover: #0369A1;
+  --primary-dark: #075985;
+  --primary-light: #E0F2FE;
+  --primary-soft: #F0F9FF;
+  --primary-glow: rgba(2, 132, 199, 0.22);
+  --accent: #2563EB;
+  --accent-light: #DBEAFE;
   
-  --secondary: #0288D1;
-  --secondary-light: #E1F5FE;
+  --secondary: #0EA5E9;
+  --secondary-light: #E0F2FE;
   
   /* Status Colors */
-  --success: #2E7D32;
-  --success-bg: #E8F5E9;
-  --warning: #E65100;
-  --warning-bg: #FFF3E0;
-  --danger: #C62828;
-  --danger-bg: #FFEBEE;
+  --success: #10B981;
+  --success-bg: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-bg: #FEF3C7;
+  --danger: #EF4444;
+  --danger-bg: #FEE2E2;
+  --delivered: #0284C7;
+  --delivered-bg: #E0F2FE;
   
   /* Neutral Palette */
   --bg-page: #F8FAFC;
@@ -33,7 +36,7 @@
   --text-muted: #64748B;
   --text-light: #94A3B8;
   --border: #E2E8F0;
-  --border-focus: #00796B;
+  --border-focus: #0284C7;
   
   /* Elevation Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -1313,3 +1316,301 @@ button, input, select, textarea {
     max-width: 100%;
   }
 }
+
+/* ==============================================================================
+   Bill Receipt & PDF Generator Styles
+   ============================================================================== */
+.bill-receipt-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  margin-top: 16px;
+  text-align: left;
+}
+
+.bill-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 14px;
+  border-bottom: 2px dashed var(--border);
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bill-store-info h3 {
+  font-size: 1.18rem;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bill-store-info p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.bill-meta-box {
+  text-align: right;
+}
+
+.bill-meta-box .invoice-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bill-meta-box .invoice-id {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  font-family: 'Outfit', sans-serif;
+}
+
+.bill-customer-info {
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.82rem;
+  margin-bottom: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.bill-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 14px;
+}
+
+.bill-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.bill-table th {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.bill-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+}
+
+.bill-table tr:last-child td {
+  border-bottom: none;
+}
+
+.bill-totals-box {
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-light);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.bill-total-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.bill-total-line.grand {
+  border-top: 1.5px dashed #93C5FD;
+  padding-top: 8px;
+  margin-top: 6px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+.bill-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-download-bill {
+  flex: 1;
+  min-width: 160px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 11px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.btn-download-bill:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-print-bill {
+  background: white;
+  color: var(--text-main);
+  border: 1.5px solid var(--border);
+  padding: 11px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.btn-print-bill:hover {
+  background: var(--bg-page);
+  border-color: var(--text-muted);
+}
+
+/* ==============================================================================
+   3-Hour Order Privacy Expiration Card
+   ============================================================================== */
+.tracking-expired-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px 22px;
+  text-align: center;
+}
+
+.privacy-shield-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.expired-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.expired-badge {
+  display: inline-block;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1D4ED8;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 14px;
+}
+
+.expired-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 480px;
+  margin: 0 auto 12px;
+}
+
+.expired-subtext {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  max-width: 440px;
+  margin: 0 auto 20px;
+}
+
+.expired-help-box {
+  background: var(--bg-page);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.btn-call-support {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.btn-call-support:hover {
+  background: var(--primary-hover);
+  color: white;
+}
+
+/* Realtime Email Sent Notification Box */
+.email-dispatched-box {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #15803D;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin: 14px 0;
+  font-size: 0.84rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.email-dispatched-box svg {
+  flex-shrink: 0;
+  color: #16A34A;
+}
+
+.email-dispatched-box strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #166534;
+}
+
+.email-dispatched-box span {
+  font-size: 0.8rem;
+  color: #15803D;
+}
+

@@ -370,6 +370,7 @@ class OrderService {
 
     final updated = _orders[index].copyWith(
       status: OrderStatus.delivered,
+      deliveredAt: DateTime.now(),
     );
 
     await _syncOrderUpdate(updated);

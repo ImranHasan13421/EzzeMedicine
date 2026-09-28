@@ -1,0 +1,12 @@
+{
+  "name": "ezzemedicine-web",
+  "version": "1.0.0",
+  "description": "EzzeMedicine Public Healthcare Storefront & Realtime Pharmacy System",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve ."
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}

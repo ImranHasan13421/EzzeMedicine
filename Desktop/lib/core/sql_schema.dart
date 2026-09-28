@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS public."EzzeMedicine_orders" (
     is_email_sent BOOLEAN NOT NULL DEFAULT false,
     email_sent_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    confirmed_at TIMESTAMPTZ
+    confirmed_at TIMESTAMPTZ,
+    delivered_at TIMESTAMPTZ
 );
 
 -- 3. Create Order Items Table

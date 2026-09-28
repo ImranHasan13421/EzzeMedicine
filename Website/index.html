@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EzzeMedicine - Smart Pharmacy & Healthcare Online Store</title>
   <meta name="description" content="Order authentic medicines online from EzzeMedicine Pharmacy. Quick order with offline pharmacist verification call, home delivery, and automated email billing.">
-  <meta name="theme-color" content="#00796B">
+  <meta name="theme-color" content="#0284C7">
 
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,10 @@
 
   <!-- Supabase JS Client via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- jsPDF & AutoTable for Client-Side Bill PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="design.css">
@@ -251,7 +255,7 @@
 
   <!-- Order Success Confirmation Modal -->
   <div class="modal-overlay" id="success-modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 600px;">
       <button class="modal-close-btn" onclick="closeSuccessModal()">✕</button>
       <div class="success-modal-content">
         <div class="success-icon-badge">
@@ -266,6 +270,34 @@
           <span class="order-id-highlight" id="success-order-id">EZM-00000</span>
         </div>
 
+        <!-- Realtime Email Notification Alert -->
+        <div class="email-dispatched-box" id="success-email-alert">
+          <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <div>
+            <strong>Realtime Bill Dispatched to Gmail:</strong>
+            <span id="success-email">email@gmail.com</span>
+          </div>
+        </div>
+
+        <!-- Instant Bill Download Action -->
+        <div class="bill-actions-row" style="margin: 14px 0 18px; justify-content: center;">
+          <button type="button" class="btn-download-bill" id="btn-success-download-pdf" onclick="handleDownloadBillFromSuccess()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span id="btn-success-download-text">Download Bill PDF</span>
+          </button>
+          
+          <button type="button" class="btn-print-bill" onclick="openTrackingForActiveOrder()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span>View Receipt & Track</span>
+          </button>
+        </div>
+
         <div class="call-reminder-card">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
@@ -278,9 +310,12 @@
           </div>
         </div>
 
-        <div style="background: var(--bg-page); padding: 14px; border-radius: var(--radius-md); font-size: 0.86rem; text-align: left; margin-bottom: 20px;">
+        <div style="background: var(--bg-page); padding: 14px; border-radius: var(--radius-md); font-size: 0.84rem; text-align: left; margin-bottom: 20px; border: 1px solid var(--border);">
           <p><strong>Delivery Method:</strong> <span id="success-delivery-type">Store Pickup</span></p>
-          <p style="margin-top: 4px;"><strong>Bill & Invoice:</strong> Will be emailed to <span id="success-email">email</span> upon verification call confirmation.</p>
+          <p style="margin-top: 6px; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+            <span>🔒</span>
+            <span><em>Privacy Protection: Order tracking automatically expires 3 hours after delivery to protect your purchase history.</em></span>
+          </p>
         </div>
 
         <button class="btn-submit-order" onclick="closeSuccessModal();">
@@ -300,13 +335,19 @@
     </div>
   </div>
 
-  <!-- Order Tracking Modal -->
+  <!-- Order Tracking & Bill Receipt Modal -->
   <div class="modal-overlay" id="tracking-modal-overlay">
-    <div class="modal-box" style="max-width: 580px;">
+    <div class="modal-box" style="max-width: 720px;">
       <button class="modal-close-btn" onclick="closeTrackingModal()">✕</button>
       <div class="tracking-header">
-        <h3 style="font-size: 1.3rem; font-weight: 800;">Track Your Order Status</h3>
-        <p style="font-size: 0.86rem; color: var(--text-muted); margin-top: 2px;">Enter your Order ID (e.g. EZM-1024) or phone number.</p>
+        <h3 style="font-size: 1.3rem; font-weight: 800;">Track Order & View Bill Receipt</h3>
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 2px;">
+          Enter your Order ID (e.g. EZM-1024) or phone number to view live status and download your bill receipt.
+        </p>
+        <div style="margin-top: 6px; font-size: 0.78rem; color: #1E40AF; background: #EFF6FF; border: 1px solid #BFDBFE; padding: 4px 10px; border-radius: var(--radius-full); display: inline-flex; align-items: center; gap: 6px;">
+          <span>🔒 Medical Privacy Rule:</span>
+          <span>Order tracking automatically expires 3 hours after delivery</span>
+        </div>
         
         <form id="track-order-form" style="display: flex; gap: 8px; margin-top: 14px;">
           <input type="text" class="form-input" id="track-query-input" placeholder="e.g. EZM-1024 or 01711234567" required>
@@ -316,7 +357,7 @@
 
       <div class="tracking-body" id="tracking-results-box">
         <p style="text-align: center; color: var(--text-muted); font-size: 0.88rem; padding: 20px 0;">
-          Submit your Order ID or registered phone number above to see realtime order verification status.
+          Submit your Order ID or registered phone number above to see realtime order verification status and bill receipt.
         </p>
       </div>
     </div>

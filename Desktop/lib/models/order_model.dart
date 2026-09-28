@@ -189,6 +189,7 @@ class OrderModel {
   final DateTime? emailSentAt;
   final DateTime createdAt;
   final DateTime? confirmedAt;
+  final DateTime? deliveredAt;
   final String? cancellationReason;
 
   OrderModel({
@@ -209,6 +210,7 @@ class OrderModel {
     this.emailSentAt,
     DateTime? createdAt,
     this.confirmedAt,
+    this.deliveredAt,
     this.cancellationReason,
   })  : createdAt = createdAt ?? DateTime.now(),
         subtotal = subtotal ?? items.fold<double>(0.0, (double sum, item) => sum + item.itemTotal),
@@ -233,6 +235,7 @@ class OrderModel {
     DateTime? emailSentAt,
     DateTime? createdAt,
     DateTime? confirmedAt,
+    DateTime? deliveredAt,
     String? cancellationReason,
   }) {
     final updatedItems = items ?? this.items;
@@ -258,6 +261,7 @@ class OrderModel {
       emailSentAt: emailSentAt ?? this.emailSentAt,
       createdAt: createdAt ?? this.createdAt,
       confirmedAt: confirmedAt ?? this.confirmedAt,
+      deliveredAt: deliveredAt ?? this.deliveredAt,
       cancellationReason: cancellationReason ?? this.cancellationReason,
     );
   }
@@ -292,6 +296,9 @@ class OrderModel {
       confirmedAt: map['confirmed_at'] != null
           ? DateTime.tryParse(map['confirmed_at'].toString())
           : null,
+      deliveredAt: map['delivered_at'] != null
+          ? DateTime.tryParse(map['delivered_at'].toString())
+          : null,
     );
   }
 
@@ -313,6 +320,7 @@ class OrderModel {
       'email_sent_at': emailSentAt?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'confirmed_at': confirmedAt?.toIso8601String(),
+      'delivered_at': deliveredAt?.toIso8601String(),
     };
   }
 
