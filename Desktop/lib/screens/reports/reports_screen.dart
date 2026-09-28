@@ -59,8 +59,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final report = orderProvider.getMonthlyReport(_selectedYear, _selectedMonth);
     final currencyFormat = NumberFormat('#,##0.00');
 
-    return Scaffold(
-      body: RefreshIndicator(
+    return Material(
+      color: Colors.transparent,
+      child: RefreshIndicator(
         onRefresh: () => orderProvider.refreshOrders(),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),

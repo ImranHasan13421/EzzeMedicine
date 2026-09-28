@@ -383,17 +383,41 @@ class OrderService {
     final client = SupabaseConfig.client;
     if (client != null && !SupabaseConfig.useMockMode) {
       try {
+        final updatePayload = Map<String, dynamic>.from(order.toMap());
+        // delivered_at column is not in Supabase schema
+        updatePayload.remove('delivered_at');
+
         await client
             .from(ordersTable)
-            .update(order.toMap())
+            .update(updatePayload)
             .eq('id', order.id);
 
-        await client.from(orderItemsTable).delete().eq('order_id', order.id);
-        for (final item in order.items) {
-          await client.from(orderItemsTable).insert(item.toMap(order.id));
+        try {
+          await client.from(orderItemsTable).delete().eq('order_id', order.id);
+          for (final item in order.items) {
+            await client.from(orderItemsTable).insert(item.toMap(order.id));
+          }
+        } catch (itemErr) {
+          debugPrint('Notice syncing order items: $itemErr');
         }
+
+        debugPrint('✅ Synced order ${order.id} update to Supabase: status=${order.status.toDbString()}');
       } catch (e) {
         debugPrint('Supabase _syncOrderUpdate error: $e');
+        // Resilient Fallback: update core status and amounts
+        try {
+          await client.from(ordersTable).update({
+            'status': order.status.toDbString(),
+            'call_status': order.callStatus.toDbString(),
+            'delivery_charge': order.deliveryCharge,
+            'total_amount': order.totalAmount,
+            'is_email_sent': order.isEmailSent,
+            'confirmed_at': order.confirmedAt?.toIso8601String(),
+          }).eq('id', order.id);
+          debugPrint('✅ Fallback status sync succeeded for ${order.id}');
+        } catch (e2) {
+          debugPrint('Fallback status sync error: $e2');
+        }
       }
     }
   }

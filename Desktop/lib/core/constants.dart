@@ -31,12 +31,24 @@ class AppConstants {
   static const List<String> medicineUnits = [
     'Strip (10 pcs)',
     'Box',
+    'Box (10 pcs)',
+    'Box (20 pcs)',
+    'Box (50 Strips)',
+    'Box (100 Pcs)',
+    'Bottle (30 Pcs)',
+    'Bottle (60ml)',
     'Bottle (100ml)',
     'Bottle (200ml)',
-    'Bottle (60ml)',
+    'Bottle (50ml)',
+    'Bottle (35ml)',
+    'Bottle (15ml)',
+    'Bottle (5ml)',
+    'Bottle (2.5ml)',
     'Vial / Ampoule',
     'Tube',
     'Piece',
+    'Piece (200 Puffs)',
+    'Piece (120 Puffs)',
   ];
 }
 

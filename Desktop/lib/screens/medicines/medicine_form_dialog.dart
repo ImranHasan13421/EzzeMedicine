@@ -347,9 +347,14 @@ class _MedicineFormDialogState extends State<MedicineFormDialog> {
                           // Category Dropdown
                           Expanded(
                             child: DropdownButtonFormField<String>(
-                              initialValue: _selectedCategory,
+                              initialValue: AppConstants.medicineCategories.contains(_selectedCategory)
+                                  ? _selectedCategory
+                                  : (_selectedCategory.isNotEmpty ? _selectedCategory : AppConstants.medicineCategories.first),
                               decoration: const InputDecoration(labelText: 'Category'),
-                              items: AppConstants.medicineCategories.map((c) {
+                              items: {
+                                ...AppConstants.medicineCategories,
+                                if (_selectedCategory.isNotEmpty) _selectedCategory,
+                              }.map((c) {
                                 return DropdownMenuItem(value: c, child: Text(c));
                               }).toList(),
                               onChanged: (val) {
@@ -361,9 +366,17 @@ class _MedicineFormDialogState extends State<MedicineFormDialog> {
                           // Unit Dropdown
                           Expanded(
                             child: DropdownButtonFormField<String>(
-                              initialValue: _selectedUnit,
+                              initialValue: {
+                                ...AppConstants.medicineUnits,
+                                if (_selectedUnit.isNotEmpty) _selectedUnit,
+                              }.contains(_selectedUnit)
+                                  ? _selectedUnit
+                                  : AppConstants.medicineUnits.first,
                               decoration: const InputDecoration(labelText: 'Packaging Unit'),
-                              items: AppConstants.medicineUnits.map((u) {
+                              items: {
+                                ...AppConstants.medicineUnits,
+                                if (_selectedUnit.isNotEmpty) _selectedUnit,
+                              }.map((u) {
                                 return DropdownMenuItem(value: u, child: Text(u));
                               }).toList(),
                               onChanged: (val) {

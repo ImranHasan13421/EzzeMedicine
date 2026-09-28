@@ -1048,12 +1048,28 @@ function initRealtimeSubscription() {
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: TABLE_ORDERS },
-        (payload) => {
+        async (payload) => {
           console.log('⚡ Realtime Order Update:', payload);
-          // If customer is currently tracking this order, update timeline instantly!
+          // If customer is currently tracking this order, update timeline and details instantly!
           if (activeTrackingOrderId && activeTrackingOrderId === payload.new.id) {
-            renderTrackingDetails(payload.new);
-            showToast(`Order status updated to: ${payload.new.status.toUpperCase()}`);
+            try {
+              const { data } = await supabaseClient
+                .from(TABLE_ORDERS)
+                .select('*, EzzeMedicine_order_items(*)')
+                .eq('id', payload.new.id)
+                .maybeSingle();
+
+              if (data) {
+                renderTrackingDetails(data);
+              } else {
+                const prevItems = (currentTrackingOrder && (currentTrackingOrder.EzzeMedicine_order_items || currentTrackingOrder.items)) || [];
+                renderTrackingDetails({ ...payload.new, EzzeMedicine_order_items: prevItems });
+              }
+            } catch (_) {
+              const prevItems = (currentTrackingOrder && (currentTrackingOrder.EzzeMedicine_order_items || currentTrackingOrder.items)) || [];
+              renderTrackingDetails({ ...payload.new, EzzeMedicine_order_items: prevItems });
+            }
+            showToast(`Order status updated to: ${payload.new.status.replace('_', ' ').toUpperCase()}`);
           }
         }
       )
@@ -1694,6 +1710,25 @@ async function handleTrackingSubmit(e) {
   }
 }
 
+async function refreshCurrentTrackingOrder() {
+  if (!activeTrackingOrderId) return;
+  try {
+    showToast('Refreshing order status...');
+    const { data } = await supabaseClient
+      .from(TABLE_ORDERS)
+      .select('*, EzzeMedicine_order_items(*)')
+      .eq('id', activeTrackingOrderId)
+      .maybeSingle();
+
+    if (data) {
+      renderTrackingDetails(data);
+      showToast(`Status: ${data.status.replace('_', ' ').toUpperCase()}`);
+    }
+  } catch (e) {
+    console.error('Refresh order error:', e);
+  }
+}
+
 function renderTrackingDetails(order) {
   const resultContainer = document.getElementById('tracking-results-box');
   if (!resultContainer) return;
@@ -1793,16 +1828,20 @@ function renderTrackingDetails(order) {
             <h4 style="font-size: 1.3rem; font-weight: 800; color: var(--primary); font-family: monospace;">#${escapeHtml(order.id)}</h4>
             <span style="font-size: 0.82rem; color: var(--text-muted);">Customer: <strong>${escapeHtml(order.customer_name)}</strong> (${escapeHtml(order.customer_phone)})</span>
           </div>
-          <div style="text-align: right;">
-            <span style="display: inline-block; padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 800; background: ${
-              isCancelled ? 'var(--danger-bg)' : isDelivered || isConfirmed ? 'var(--success-bg)' : 'var(--warning-bg)'
-            }; color: ${
-              isCancelled ? 'var(--danger)' : isDelivered || isConfirmed ? 'var(--success)' : 'var(--warning)'
-            };">
-              ${escapeHtml(order.status.replace('_', ' ').toUpperCase())}
-            </span>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+              <span style="display: inline-block; padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.78rem; font-weight: 800; background: ${
+                isCancelled ? 'var(--danger-bg)' : isDelivered || isConfirmed ? 'var(--success-bg)' : 'var(--warning-bg)'
+              }; color: ${
+                isCancelled ? 'var(--danger)' : isDelivered || isConfirmed ? 'var(--success)' : 'var(--warning)'
+              };">
+                ${escapeHtml(order.status.replace('_', ' ').toUpperCase())}
+              </span>
+              <button type="button" onclick="refreshCurrentTrackingOrder()" title="Refresh Status" style="background: none; border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; cursor: pointer; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem;">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>Refresh</span>
+              </button>
+            </div>
             <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark); margin-top: 4px;">৳${totalAmount.toFixed(2)}</div>
-          </div>
         </div>
 
         <!-- 4-Step Timeline -->

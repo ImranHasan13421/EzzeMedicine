@@ -37,8 +37,9 @@ class ProfileScreen extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.user;
 
-    return Scaffold(
-      body: RefreshIndicator(
+    return Material(
+      color: Colors.transparent,
+      child: RefreshIndicator(
         onRefresh: () async {
           await context.read<AuthProvider>().reloadProfile();
         },

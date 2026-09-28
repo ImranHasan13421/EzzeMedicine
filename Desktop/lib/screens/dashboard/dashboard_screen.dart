@@ -29,8 +29,9 @@ class DashboardScreen extends StatelessWidget {
         .take(4)
         .toList();
 
-    return Scaffold(
-      body: RefreshIndicator(
+    return Material(
+      color: Colors.transparent,
+      child: RefreshIndicator(
         onRefresh: () async {
           await Future.wait([
             context.read<OrderProvider>().refreshOrders(),

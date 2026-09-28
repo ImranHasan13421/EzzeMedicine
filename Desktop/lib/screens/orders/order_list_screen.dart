@@ -51,8 +51,9 @@ class _OrderListScreenState extends State<OrderListScreen> with SingleTickerProv
     final orders = orderProvider.filteredOrders;
     final pendingCount = orderProvider.pendingCallsCount;
 
-    return Scaffold(
-      body: Padding(
+    return Material(
+      color: Colors.transparent,
+      child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

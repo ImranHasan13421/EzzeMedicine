@@ -54,6 +54,7 @@ class _EzzeMedicineAdminAppState extends State<EzzeMedicineAdminApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
+      themeAnimationDuration: Duration.zero,
       home: authProvider.isAuthenticated
           ? MainLayoutScreen(
               onToggleTheme: _toggleTheme,

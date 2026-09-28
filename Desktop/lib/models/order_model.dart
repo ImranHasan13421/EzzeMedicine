@@ -320,7 +320,6 @@ class OrderModel {
       'email_sent_at': emailSentAt?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'confirmed_at': confirmedAt?.toIso8601String(),
-      'delivered_at': deliveredAt?.toIso8601String(),
     };
   }
 

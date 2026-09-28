@@ -41,11 +41,11 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
     final user = authProvider.user;
 
     final screens = [
-      DashboardScreen(onNavigate: _navigateTo),
-      const OrderListScreen(),
-      const MedicineListScreen(),
-      const ReportsScreen(),
-      const ProfileScreen(),
+      DashboardScreen(key: const ValueKey('screen_dashboard'), onNavigate: _navigateTo),
+      const OrderListScreen(key: ValueKey('screen_orders')),
+      const MedicineListScreen(key: ValueKey('screen_medicines')),
+      const ReportsScreen(key: ValueKey('screen_reports')),
+      const ProfileScreen(key: ValueKey('screen_profile')),
     ];
 
     if (isDesktop) {
